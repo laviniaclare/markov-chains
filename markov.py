@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-""" 1. get a random key from the chain_dict using random.sample(chain_dict, 1)
-2. get random number method to generate random number for starting point in the value 
-    list associated with a tuple.
-3. initialize empty list (use .join() at the end to make it a string)
+"""
+To do: deal with quotation marks.
 END. Get program to accept input file from command line.
 """
 
-import sys
+from sys import argv
 import random
 
 def make_chains(corpus):
@@ -27,27 +25,38 @@ def make_text(chain_dict):
     """Takes a dictionary of markov chains and returns random text
     based off an original text."""
     output = []
-    starting_key = random.sample(chain_dict, 1)
 
-    while len(output) < 10 or output[-1][-1] != ".":
-        # append starting key to list
-        starting_key = starting_key[0]
-        output.append(starting_key[0])
-        output.append(starting_key[1])
+    # generate random starting key and assign both elements to empty list
+    starting_key = random.sample(chain_dict, 1)
+    output.append(starting_key[0][0])
+    output.append(starting_key[0][1])
+
+    # initialize next_key to be starting_key for first pass thru loop
+    next_key = starting_key
+    sentence_ends=['.','!','?']
+
+    # go thru loop until length of output >= 10 or element of 
+    # sentence_ends is encountered.
+    while len(output) < 10 or output[-1][-1] not in sentence_ends:
+        # convert tuple-inside-list back to tuple
+        next_key = next_key[0]
+
         # next, append random element of key's value to the output list.
-        next_word_index = random.randint(0, len(chain_dict[starting_key]) - 1)
-        next_word = chain_dict[starting_key][next_word_index]
+        next_word_index = random.randint(0, len(chain_dict[next_key]) - 1)
+        next_word = chain_dict[next_key][next_word_index]
         output.append(next_word)
 
-        starting_key = [(starting_key[1], next_word)]
+        # define next key as second element of previous key, and next_word
+        next_key = [(next_key[1], next_word)]
 
     return " ".join(output)
 
 def main():
-    #args = sys.argv
+
+    script, filename = argv
 
     # Change this to read input_text from a file
-    input_text = open("twain.txt")
+    input_text = open(filename)
     read_text = input_text.read()
     corpus = read_text.split()
 
