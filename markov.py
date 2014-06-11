@@ -2,7 +2,6 @@
 
 """
 To do: deal with quotation marks.
-END. Get program to accept input file from command line.
 """
 
 from sys import argv
@@ -27,7 +26,12 @@ def make_text(chain_dict):
     output = []
 
     # generate random starting key and assign both elements to empty list
-    starting_key = random.sample(chain_dict, 1)
+    rand_key = random.sample(chain_dict, 1)
+    while not rand_key[0][0].isupper():
+        rand_key = random.sample(chain_dict, 1)
+
+    starting_key = rand_key
+
     output.append(starting_key[0][0])
     output.append(starting_key[0][1])
 
@@ -37,7 +41,7 @@ def make_text(chain_dict):
 
     # go thru loop until length of output >= 10 or element of 
     # sentence_ends is encountered.
-    while len(output) < 10 or output[-1][-1] not in sentence_ends:
+    while len(" ".join(output)) < 140:
         # convert tuple-inside-list back to tuple
         next_key = next_key[0]
 
@@ -49,16 +53,23 @@ def make_text(chain_dict):
         # define next key as second element of previous key, and next_word
         next_key = [(next_key[1], next_word)]
 
+        if output[-1][-1] in sentence_ends:
+            break
+
     return " ".join(output)
 
 def main():
 
-    script, filename = argv
+    script, filename1, filename2 = argv
 
     # Change this to read input_text from a file
-    input_text = open(filename)
-    read_text = input_text.read()
-    corpus = read_text.split()
+    input_text1 = open(filename1)
+    read_text1 = input_text1.read()
+    corpus = read_text1.split()
+
+    input_text2 = open(filename2)
+    read_text2 = input_text2.read()
+    corpus += read_text2.split()
 
     chain_dict = make_chains(corpus)
     random_text = make_text(chain_dict)
